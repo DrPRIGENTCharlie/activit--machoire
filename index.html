@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Habitudes de la mâchoire · relevés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+:root{
+  --bg:#f4f7f9; --surface:#ffffff; --ink:#1b2226; --mute:#4a555c; --line:#c5d0d6;
+  --accent:#1e5a78; --accent-ink:#ffffff; --accent-soft:#e3eef4; --off:#e6ebee;
+  --sans:'Source Sans 3','Segoe UI','Helvetica Neue',sans-serif;
+  --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11171a; --surface:#1a2226; --ink:#e7eef1; --mute:#a9b6bd; --line:#34434b;
+    --accent:#7fb7d4; --accent-ink:#0d1a21; --accent-soft:#1f3440; --off:#232d32;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11171a; --surface:#1a2226; --ink:#e7eef1; --mute:#a9b6bd; --line:#34434b;
+  --accent:#7fb7d4; --accent-ink:#0d1a21; --accent-soft:#1f3440; --off:#232d32;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding:16px 16px 104px}
+header h1{font-family:var(--serif);font-weight:700;font-size:24px;line-height:1.15;margin:4px 0 2px;color:var(--accent)}
+header p{margin:0;color:var(--mute);font-size:15px}
+
+/* day + moment pickers */
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:16px 0 10px}
+.day{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;min-height:56px;padding:6px 0 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}
+.day b{font-size:16px}
+.day[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.dots{display:flex;gap:3px}
+.dots i{width:6px;height:6px;border-radius:3px;border:1px solid currentColor;opacity:.8}
+.dots i.on{background:currentColor;opacity:1}
+.moments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1.5px solid var(--accent);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.moment{border:0;background:var(--surface);min-height:48px;cursor:pointer;font-weight:600}
+.moment+.moment{border-left:1.5px solid var(--accent)}
+.moment[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+/* question blocks */
+section.q{background:var(--surface);border-radius:14px;padding:14px 14px 8px;margin-bottom:14px;border:1px solid var(--line)}
+section.q h2{font-family:var(--serif);font-weight:600;font-size:18px;margin:0 0 2px}
+section.q .hint{color:var(--mute);font-size:14px;margin:0 0 8px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:8px 4px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;cursor:pointer}
+.opt:first-of-type{border-top:0}
+.mark{flex-shrink:0;width:28px;height:28px;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center}
+.mark.sq{border-radius:6px}
+.mark.ci{border-radius:14px}
+.opt[aria-checked="true"] .mark{background:var(--accent);border-color:var(--accent)}
+.opt[aria-checked="true"] .mark svg{display:block}
+.mark svg{display:none;width:18px;height:18px}
+.opt small{display:block;color:var(--mute);font-size:14px}
+.saved{color:var(--mute);font-size:14px;text-align:center;min-height:20px;margin:4px 0 0}
+
+/* table view */
+.grid-scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-top:14px}
+table{border-collapse:collapse;font-size:14px}
+th,td{border:1px solid var(--line);padding:0;text-align:center}
+th.lab,td.lab{text-align:left;padding:6px 8px;min-width:190px;position:sticky;left:0;background:var(--surface);z-index:1}
+td.grp{text-align:left;padding:5px 8px;background:var(--accent-soft);font-weight:700;font-size:13px}
+th{background:var(--accent-soft);font-weight:700;padding:4px 0;min-width:30px}
+th.dsep,td.dsep{border-left:2.5px solid var(--ink)}
+td.cell{width:32px;height:32px}
+td.cell button{width:32px;height:32px;border:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center}
+td.cell.off{background:var(--off)}
+.tick{width:16px;height:16px;border:1.5px solid var(--ink);display:block}
+.tick.ci{border-radius:8px}.tick.sq{border-radius:3px}
+.tick.on{background:var(--accent);border-color:var(--accent)}
+
+/* send view */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-weight:600}
+.field input{min-height:48px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;background:var(--surface)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 14px;border:1.5px solid var(--line);border-radius:22px;background:var(--surface);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.primary{width:100%;min-height:54px;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:18px;cursor:pointer;margin-top:6px}
+.secondary{width:100%;min-height:48px;border:1.5px solid var(--line);border-radius:12px;background:transparent;cursor:pointer;margin-top:24px;color:var(--mute)}
+.note{color:var(--mute);font-size:14px;margin:10px 0 0}
+.progress{font-size:15px;margin:0 0 14px}
+ol.steps{margin:0 0 16px;padding-left:22px}
+ol.steps li{margin-bottom:6px}
+
+/* bottom nav */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav.tabs button{min-height:58px;border:0;background:transparent;font-weight:600;color:var(--mute);cursor:pointer}
+nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+/* capture view: always light, compact enough for one phone screenshot */
+.capture{position:fixed;inset:0;z-index:20;background:#ffffff;color:#1b2226;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 14px) 10px calc(env(safe-area-inset-bottom,0px) + 14px)}
+.cap-inner{max-width:420px;margin:0 auto}
+.capture h2{font-family:var(--serif);font-size:19px;margin:0 0 2px;color:#1e5a78}
+.cap-meta{font-size:13px;margin:0 0 8px;color:#1b2226}
+.cap-grid{border-collapse:collapse;font-size:11px;margin:0 auto 8px}
+.cap-grid th,.cap-grid td{border:1px solid #9aa7ae;padding:0;text-align:center;height:17px;min-width:0}
+.cap-grid th{background:#eef3f6;font-weight:700;color:#1b2226}
+.cap-grid td.cl,.cap-grid th.cl{width:30px;text-align:left;padding:0 3px;font-weight:700;background:#ffffff;position:static}
+.cap-grid td.cc{width:13px}
+.cap-grid td.cc.on{background:#1e5a78}
+.cap-grid td.cc.off{background:#d9e0e4}
+.cap-grid .ds{border-left:2px solid #1b2226}
+.cap-grid td.cg{background:#eef3f6;text-align:left;padding:0 4px;font-weight:700;font-size:10.5px}
+.cap-legend{display:grid;grid-template-columns:30px 1fr;gap:1px 6px;font-size:11.5px;line-height:1.3;margin:0 0 8px}
+.cap-legend b{color:#1e5a78}
+.cap-foot{font-size:11px;color:#4a555c;margin:0 0 12px}
+.cap-close{width:100%;min-height:48px;border:1.5px solid #9aa7ae;border-radius:12px;background:#ffffff;color:#1b2226;font-weight:600;cursor:pointer}
+[hidden]{display:none !important}
+@media (prefers-reduced-motion: no-preference){.opt .mark,.day,.moment,.chip{transition:background-color .12s,border-color .12s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Habitudes de la mâchoire</h1>
+    <p id="subtitle">7 jours, 3 relevés par jour</p>
+  </header>
+
+  <!-- RELEVÉ -->
+  <main id="view-releve">
+    <div class="days" id="days" role="group" aria-label="Choisir le jour"></div>
+    <div class="moments" id="moments" role="group" aria-label="Choisir le moment"></div>
+
+    <section class="q" aria-labelledby="qa">
+      <h2 id="qa">En ce moment précis, ma mâchoire est…</h2>
+      <p class="hint">Sans rien changer, une seule réponse.</p>
+      <div id="listA" role="radiogroup" aria-labelledby="qa"></div>
+    </section>
+
+    <section class="q" aria-labelledby="qb">
+      <h2 id="qb">Depuis le relevé précédent, je me suis surpris(e) à…</h2>
+      <p class="hint">Cochez si oui.</p>
+      <div id="listB"></div>
+    </section>
+
+    <section class="q" id="blockC" aria-labelledby="qc">
+      <h2 id="qc">Au réveil</h2>
+      <p class="hint">Cochez si oui.</p>
+      <div id="listC"></div>
+    </section>
+
+    <p class="saved" id="saved" aria-live="polite"></p>
+  </main>
+
+  <!-- TABLEAU -->
+  <main id="view-tableau" hidden>
+    <p class="note" style="margin-top:14px">Le même tableau que la fiche papier. Touchez une case pour la cocher ou la décocher.</p>
+    <div class="grid-scroll"><table id="grid"></table></div>
+  </main>
+
+  <!-- ENVOYER -->
+  <main id="view-envoyer" hidden>
+    <section class="q" style="margin-top:16px">
+      <h2>Comment faire</h2>
+      <ol class="steps">
+        <li>Réglez 3 alarmes sur votre téléphone : matin, après-midi et soir, à distance des repas.</li>
+        <li>À chaque alarme, ouvrez cette page et répondez. Cela prend moins d'une minute.</li>
+        <li>Au bout des 7 jours, créez le PDF ci-dessous et envoyez-le au cabinet.</li>
+      </ol>
+    </section>
+    <div class="field">
+      <label for="name">Nom</label>
+      <input id="name" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="start">Commencé le</label>
+      <input id="start" type="date">
+    </div>
+    <div class="field">
+      <span style="font-weight:600" id="plab">La personne qui partage votre chambre vous entend-elle grincer des dents la nuit ?</span>
+      <div class="chips" id="partner" role="group" aria-labelledby="plab"></div>
+    </div>
+    <p class="progress" id="progress"></p>
+    <button class="primary" id="showCapture" type="button">Afficher le tableau à envoyer</button>
+    <p class="note" id="captureHint">Faites une capture d'écran du tableau, puis envoyez-la au cabinet par mail ou messagerie.</p>
+    <button class="primary" id="makePdf" type="button" hidden>Créer le PDF</button>
+    <p class="note" id="pdfMsg" aria-live="polite"></p>
+    <p class="note">Vos réponses restent uniquement sur ce téléphone. Rien n'est envoyé tant que vous ne partagez pas vous-même le PDF.</p>
+    <button class="secondary" id="reset" type="button">Effacer toutes les réponses</button>
+  </main>
+</div>
+
+<div id="capture" class="capture" role="dialog" aria-modal="true" aria-labelledby="capTitle" hidden>
+  <div class="cap-inner">
+    <h2 id="capTitle">Habitudes de la mâchoire</h2>
+    <p class="cap-meta" id="capMeta"></p>
+    <table class="cap-grid" id="capGrid"></table>
+    <div class="cap-legend" id="capLegend"></div>
+    <p class="cap-meta" id="capPartner"></p>
+    <p class="cap-foot">Dr Charlie Prigent, chirurgien-dentiste</p>
+    <button type="button" class="cap-close" id="closeCapture">Fermer</button>
+  </div>
+</div>
+
+<nav class="tabs" aria-label="Navigation">
+  <button type="button" data-view="releve" aria-current="page">Relevé</button>
+  <button type="button" data-view="tableau">Tableau</button>
+  <button type="button" data-view="envoyer">Envoyer</button>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var KEY = "releves-machoire-v1";
+  var MOMENTS = [{k:"M",label:"Matin"},{k:"A",label:"Après-midi"},{k:"S",label:"Soir"}];
+  var A_ITEMS = [
+    {t:"Détendue, dents écartées"},
+    {t:"Dents qui se touchent, sans serrer"},
+    {t:"Dents serrées"},
+    {t:"Dents qui frottent ou grincent"},
+    {t:"Crispée ou poussée", s:"en avant ou sur le côté, sans que les dents se touchent"}
+  ];
+  var B_ITEMS = [
+    {t:"Pousser la langue contre ou entre les dents"},
+    {t:"Faire jouer les dents entre elles"},
+    {t:"Mordiller la joue, la lèvre ou la langue"},
+    {t:"Mordiller un objet", s:"stylo, ongles, doigts…"},
+    {t:"Mâcher un chewing-gum"}
+  ];
+  var C_ITEMS = [
+    {t:"Mâchoire fatiguée, raide ou douloureuse"},
+    {t:"Mal de tête aux tempes"}
+  ];
+  var PARTNER = ["Oui","Non","Ne sait pas","Je dors seul(e)"];
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--accent-ink)"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+  function blank(){ return {name:"", start:"", partner:null, cells:{}}; }
+  var state = blank();
+  try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") state = Object.assign(blank(), p); } } catch(e) {}
+  function persist(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); flash("Réponse enregistrée"); }
+    catch(e){ flash("Enregistrement impossible sur ce navigateur : gardez la page ouverte."); }
+  }
+  var flashT;
+  function flash(msg){ var el=document.getElementById("saved"); el.textContent=msg; clearTimeout(flashT); flashT=setTimeout(function(){el.textContent="";},1800); }
+
+  function cell(d,m){ var k=d+"-"+m; if(!state.cells[k]) state.cells[k]={a:null,b:[false,false,false,false,false],c:[false,false]}; return state.cells[k]; }
+  function peek(d,m){ return state.cells[d+"-"+m] || null; }
+  function done(d,m){ var c=peek(d,m); if(!c) return false; return c.a!==null || c.b.some(Boolean) || c.c.some(Boolean); }
+
+  // auto-select today's slot
+  var cur = {d:0, m:0};
+  (function autoSelect(){
+    var now = new Date(), h = now.getHours();
+    cur.m = h < 12 ? 0 : (h < 18 ? 1 : 2);
+    if (state.start) {
+      var s = new Date(state.start + "T00:00:00");
+      var t = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var diff = Math.round((t - s) / 86400000);
+      if (!isNaN(diff)) cur.d = Math.max(0, Math.min(6, diff));
+    } else {
+      var iso = now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+      state.start = iso;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {}
+    }
+  })();
+
+  function el(tag, attrs, html){ var e=document.createElement(tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (html!=null) e.innerHTML=html; return e; }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+
+  function renderPickers(){
+    var days=document.getElementById("days"); days.innerHTML="";
+    for (var d=0; d<7; d++){
+      var dots=""; for (var m=0;m<3;m++) dots+='<i class="'+(done(d,m)?"on":"")+'"></i>';
+      var b=el("button",{type:"button","class":"day","aria-pressed":String(d===cur.d),"aria-label":"Jour "+(d+1)},"<b>J"+(d+1)+'</b><span class="dots" aria-hidden="true">'+dots+"</span>");
+      (function(d){ b.addEventListener("click",function(){ cur.d=d; renderReleve(); }); })(d);
+      days.appendChild(b);
+    }
+    var mo=document.getElementById("moments"); mo.innerHTML="";
+    MOMENTS.forEach(function(x,i){
+      var b=el("button",{type:"button","class":"moment","aria-pressed":String(i===cur.m)},x.label);
+      b.addEventListener("click",function(){ cur.m=i; renderReleve(); });
+      mo.appendChild(b);
+    });
+    document.getElementById("subtitle").textContent = "Jour "+(cur.d+1)+" sur 7, "+MOMENTS[cur.m].label.toLowerCase();
+  }
+
+  function optButton(item, checked, shape, role){
+    var label = esc(item.t) + (item.s ? "<small>"+esc(item.s)+"</small>" : "");
+    return el("button",{type:"button","class":"opt",role:role,"aria-checked":String(checked)},'<span class="mark '+shape+'">'+CHECK+"</span><span>"+label+"</span>");
+  }
+
+  function renderReleve(){
+    renderPickers();
+    var c = peek(cur.d,cur.m) || {a:null,b:[false,false,false,false,false],c:[false,false]};
+    var la=document.getElementById("listA"); la.innerHTML="";
+    A_ITEMS.forEach(function(it,i){
+      var b=optButton(it, c.a===i, "ci", "radio");
+      b.addEventListener("click",function(){ var x=cell(cur.d,cur.m); x.a = (x.a===i) ? null : i; persist(); renderReleve(); });
+      la.appendChild(b);
+    });
+    var lb=document.getElementById("listB"); lb.innerHTML="";
+    B_ITEMS.forEach(function(it,i){
+      var b=optButton(it, c.b[i], "sq", "checkbox");
+      b.addEventListener("click",function(){ var x=cell(cur.d,cur.m); x.b[i]=!x.b[i]; persist(); renderReleve(); });
+      lb.appendChild(b);
+    });
+    var blockC=document.getElementById("blockC");
+    if (cur.m===1){ blockC.hidden=true; }
+    else {
+      blockC.hidden=false;
+      document.getElementById("qc").textContent = cur.m===0 ? "Au réveil" : "Au coucher";
+      var lc=document.getElementById("listC"); lc.innerHTML="";
+      C_ITEMS.forEach(function(it,i){
+        var b=optButton(it, c.c[i], "sq", "checkbox");
+        b.addEventListener("click",function(){ var x=cell(cur.d,cur.m); x.c[i]=!x.c[i]; persist(); renderReleve(); });
+        lc.appendChild(b);
+      });
+    }
+  }
+
+  function renderGrid(){
+    var t=document.getElementById("grid"); t.innerHTML="";
+    var h1="<tr><th class='lab'></th>"; for (var d=0; d<7; d++) h1+="<th colspan='3' class='"+(d>0?"dsep":"")+"'>Jour "+(d+1)+"</th>"; h1+="</tr>";
+    var h2="<tr><th class='lab' style='font-weight:400;font-size:12px'>M matin, A après-midi, S soir</th>";
+    for (var d2=0; d2<7; d2++) for (var m=0;m<3;m++) h2+="<th class='"+(m===0&&d2>0?"dsep":"")+"'>"+MOMENTS[m].k+"</th>";
+    h2+="</tr>"; t.insertAdjacentHTML("beforeend", h1+h2);
+    function group(label){ t.insertAdjacentHTML("beforeend","<tr><td class='grp' colspan='22'>"+label+"</td></tr>"); }
+    function rows(items, kind){
+      items.forEach(function(it,i){
+        var tr=document.createElement("tr");
+        tr.innerHTML="<td class='lab'>"+esc(it.t)+"</td>";
+        for (var d=0; d<7; d++) for (var m=0;m<3;m++){
+          var td=document.createElement("td"); td.className="cell"+(m===0&&d>0?" dsep":"");
+          if (kind==="c" && m===1){ td.className+=" off"; tr.appendChild(td); continue; }
+          var c=peek(d,m), on=false;
+          if (c){ on = kind==="a" ? c.a===i : c[kind][i]; }
+          var shape = kind==="a" ? "ci" : "sq";
+          var btn=el("button",{type:"button","aria-label":it.t+", jour "+(d+1)+", "+MOMENTS[m].label,"aria-pressed":String(on)},"<span class='tick "+shape+(on?" on":"")+"'></span>");
+          (function(d,m,i){ btn.addEventListener("click",function(){
+            var x=cell(d,m);
+            if (kind==="a") x.a = x.a===i ? null : i; else x[kind][i]=!x[kind][i];
+            persist(); renderGrid();
+          }); })(d,m,i);
+          td.appendChild(btn); tr.appendChild(td);
+        }
+        t.appendChild(tr);
+      });
+    }
+    group("En ce moment précis (une seule case)"); rows(A_ITEMS,"a");
+    group("Depuis le relevé précédent"); rows(B_ITEMS,"b");
+    group("Au réveil et au coucher (M et S)"); rows(C_ITEMS,"c");
+  }
+
+  function countDone(){ var n=0; for (var d=0; d<7; d++) for (var m=0;m<3;m++) if (done(d,m)) n++; return n; }
+
+  function renderSend(){
+    var n=document.getElementById("name"); n.value=state.name||"";
+    var s=document.getElementById("start"); s.value=state.start||"";
+    var pc=document.getElementById("partner"); pc.innerHTML="";
+    PARTNER.forEach(function(p,i){
+      var b=el("button",{type:"button","class":"chip","aria-pressed":String(state.partner===i)},p);
+      b.addEventListener("click",function(){ state.partner = state.partner===i ? null : i; persist(); renderSend(); });
+      pc.appendChild(b);
+    });
+    document.getElementById("progress").textContent = countDone()+" relevés remplis sur 21.";
+  }
+  document.getElementById("name").addEventListener("input",function(e){ state.name=e.target.value; persist(); });
+  document.getElementById("start").addEventListener("change",function(e){ state.start=e.target.value; persist(); });
+
+  // tabs
+  var views={releve:document.getElementById("view-releve"),tableau:document.getElementById("view-tableau"),envoyer:document.getElementById("view-envoyer")};
+  Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"),function(b){
+    b.addEventListener("click",function(){
+      var v=b.getAttribute("data-view");
+      Object.keys(views).forEach(function(k){ views[k].hidden = k!==v; });
+      Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"),function(x){ if (x===b) x.setAttribute("aria-current","page"); else x.removeAttribute("aria-current"); });
+      if (v==="releve") renderReleve(); if (v==="tableau") renderGrid(); if (v==="envoyer") renderSend();
+      window.scrollTo(0,0);
+    });
+  });
+
+  document.getElementById("reset").addEventListener("click",function(){
+    if (!confirm("Effacer toutes les réponses de ce téléphone ? Cette action est définitive.")) return;
+    state = blank();
+    try { localStorage.removeItem(KEY); } catch(e) {}
+    cur = {d:0, m:cur.m};
+    renderSend(); flash("");
+    document.getElementById("pdfMsg").textContent = "Toutes les réponses ont été effacées.";
+  });
+
+  // ---------- PDF
+  function fmtDate(iso){ if(!iso) return ""; var p=iso.split("-"); return p.length===3 ? p[2]+"/"+p[1]+"/"+p[0] : iso; }
+  function buildPdf(){
+    var J = window.jspdf && window.jspdf.jsPDF; if (!J) throw new Error("nolib");
+    var doc = new J({orientation:"landscape", unit:"mm", format:"a4"});
+    var X=12, Y=14, LAB=84, CW=(297-2*X-LAB)/21, RH=6.6;
+    doc.setTextColor(27,34,38);
+    doc.setFont("helvetica","bold"); doc.setFontSize(15);
+    doc.text("Habitudes de la mâchoire : 7 jours, 3 relevés par jour", X, Y);
+    doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    doc.text("Nom : "+(state.name||"") + "     Commencé le : "+fmtDate(state.start) + "     Relevés remplis : "+countDone()+" / 21", X, Y+6);
+    var y = Y+11;
+    function line(x1,y1,x2,y2,w){ doc.setLineWidth(w||0.2); doc.line(x1,y1,x2,y2); }
+    // header rows
+    doc.setFillColor(238,243,246); doc.rect(X, y, LAB+21*CW, RH*2, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(9);
+    for (var d=0; d<7; d++) doc.text("Jour "+(d+1), X+LAB+(d*3+1.5)*CW, y+4.4, {align:"center"});
+    doc.setFontSize(8);
+    for (var i=0;i<21;i++) doc.text(MOMENTS[i%3].k, X+LAB+(i+0.5)*CW, y+RH+4.3, {align:"center"});
+    doc.setFont("helvetica","normal"); doc.text("M matin, A après-midi, S soir", X+2, y+RH+4.3);
+    var top=y; y += RH*2;
+    function group(label){
+      doc.setFillColor(238,243,246); doc.rect(X, y, LAB+21*CW, 5.2, "F");
+      doc.setFont("helvetica","bold"); doc.setFontSize(8.5); doc.text(label, X+2, y+3.7);
+      y += 5.2; line(X,y,X+LAB+21*CW,y);
+    }
+    function rows(items, kind){
+      items.forEach(function(it,i){
+        doc.setFont("helvetica","normal"); doc.setFontSize(8.8);
+        var label = it.t + (it.s ? " ("+it.s+")" : "");
+        var lines = doc.splitTextToSize(label, LAB-4);
+        var h = Math.max(RH, lines.length*3.6+2.4);
+        doc.text(lines, X+2, y+ (h - (lines.length-1)*3.6)/2 + 1.2);
+        for (var c=0;c<21;c++){
+          var dd=Math.floor(c/3), m=c%3, cx=X+LAB+(c+0.5)*CW, cy=y+h/2;
+          if (kind==="c" && m===1){ doc.setFillColor(217,224,228); doc.rect(X+LAB+c*CW, y, CW, h, "F"); continue; }
+          var v=peek(dd,m), on = v ? (kind==="a" ? v.a===i : v[kind][i]) : false;
+          doc.setDrawColor(27,34,38); doc.setLineWidth(0.3);
+          if (kind==="a"){ if (on){ doc.setFillColor(30,90,120); doc.circle(cx,cy,1.9,"FD"); } else doc.circle(cx,cy,1.9,"S"); }
+          else { if (on){ doc.setFillColor(30,90,120); doc.rect(cx-1.9,cy-1.9,3.8,3.8,"FD"); } else doc.rect(cx-1.9,cy-1.9,3.8,3.8,"S"); }
+        }
+        y += h; line(X,y,X+LAB+21*CW,y);
+      });
+    }
+    group("En ce moment précis (une seule réponse par relevé)"); rows(A_ITEMS,"a");
+    group("Depuis le relevé précédent, je me suis surpris(e) à"); rows(B_ITEMS,"b");
+    group("Au réveil (M) et au coucher (S)"); rows(C_ITEMS,"c");
+    // grid lines
+    doc.setDrawColor(95,107,115);
+    line(X,top,X+LAB+21*CW,top); line(X,top+RH,X+LAB+21*CW,top+RH); line(X,top+2*RH,X+LAB+21*CW,top+2*RH);
+    line(X,top,X,y); line(X+LAB,top,X+LAB,y);
+    for (var k=1;k<=21;k++){ var xx=X+LAB+k*CW; if (k%3===0 && k<21){ doc.setDrawColor(27,34,38); line(xx,top,xx,y,0.7); doc.setDrawColor(95,107,115);} else line(xx,top+RH,xx,y); }
+    line(X+LAB+21*CW,top,X+LAB+21*CW,y);
+    y += 8;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(27,34,38);
+    doc.text("Grincement nocturne entendu par la personne qui partage la chambre : "+(state.partner===null ? "non renseigné" : PARTNER[state.partner]), X, y);
+    doc.setFontSize(8.5); doc.setTextColor(74,85,92);
+    doc.text("Dr Charlie Prigent, chirurgien-dentiste", X, 200);
+    var dt=new Date(); doc.text("PDF créé le "+String(dt.getDate()).padStart(2,"0")+"/"+String(dt.getMonth()+1).padStart(2,"0")+"/"+dt.getFullYear(), 297-X, 200, {align:"right"});
+    return doc;
+  }
+
+  // ---------- capture view
+  function renderCapture(){
+    document.getElementById("capMeta").textContent =
+      (state.name ? state.name + ", " : "") + "commencé le " + (fmtDate(state.start) || "non renseigné") + ". " + countDone() + " relevés sur 21.";
+    var g=document.getElementById("capGrid"), h="";
+    h+="<tr><th class='cl'></th>"; for (var d=0; d<7; d++) h+="<th colspan='3' class='"+(d>0?"ds":"")+"'>J"+(d+1)+"</th>"; h+="</tr>";
+    h+="<tr><th class='cl'></th>"; for (var d2=0; d2<7; d2++) for (var m=0;m<3;m++) h+="<th class='"+(m===0&&d2>0?"ds":"")+"' style='font-size:9px'>"+MOMENTS[m].k+"</th>"; h+="</tr>";
+    function grp(t){ h+="<tr><td class='cg' colspan='22'>"+t+"</td></tr>"; }
+    function rows(items, kind, prefix){
+      items.forEach(function(it,i){
+        h+="<tr><td class='cl'>"+prefix+(i+1)+"</td>";
+        for (var d=0; d<7; d++) for (var m=0;m<3;m++){
+          var cls="cc"+(m===0&&d>0?" ds":"");
+          if (kind==="c" && m===1){ h+="<td class='"+cls+" off'></td>"; continue; }
+          var v=peek(d,m), on = v ? (kind==="a" ? v.a===i : v[kind][i]) : false;
+          h+="<td class='"+cls+(on?" on":"")+"'></td>";
+        }
+        h+="</tr>";
+      });
+    }
+    grp("A · En ce moment"); rows(A_ITEMS,"a","A");
+    grp("B · Depuis le relevé précédent"); rows(B_ITEMS,"b","B");
+    grp("C · Réveil (M) et coucher (S)"); rows(C_ITEMS,"c","C");
+    g.innerHTML=h;
+    var lg="";
+    A_ITEMS.forEach(function(it,i){ lg+="<b>A"+(i+1)+"</b><span>"+esc(it.t)+"</span>"; });
+    B_ITEMS.forEach(function(it,i){ lg+="<b>B"+(i+1)+"</b><span>"+esc(it.t)+"</span>"; });
+    C_ITEMS.forEach(function(it,i){ lg+="<b>C"+(i+1)+"</b><span>"+esc(it.t)+"</span>"; });
+    document.getElementById("capLegend").innerHTML=lg;
+    document.getElementById("capPartner").textContent = "Grincement nocturne entendu par la personne qui partage la chambre : " + (state.partner===null ? "non renseigné" : PARTNER[state.partner]) + ".";
+  }
+  var lastFocus=null;
+  document.getElementById("showCapture").addEventListener("click",function(){
+    lastFocus=document.activeElement; renderCapture();
+    var c=document.getElementById("capture"); c.hidden=false; c.scrollTop=0;
+    document.getElementById("closeCapture").focus();
+  });
+  function closeCapture(){ document.getElementById("capture").hidden=true; if (lastFocus) lastFocus.focus(); }
+  document.getElementById("closeCapture").addEventListener("click", closeCapture);
+  document.getElementById("capture").addEventListener("keydown",function(e){ if (e.key==="Escape") closeCapture(); });
+
+  // PDF only where the browser can actually save it: outside the Claude viewer (self-hosted copy)
+  var inClaude = !!(window.claude && typeof window.claude.use==="function");
+  if (!inClaude) document.getElementById("makePdf").hidden = false;
+  var dlPromise = Promise.resolve(null);
+
+  document.getElementById("makePdf").addEventListener("click", async function(){
+    var msg=document.getElementById("pdfMsg"); msg.textContent="";
+    var doc;
+    try { doc = buildPdf(); } catch(e){ msg.textContent="Le PDF n'a pas pu être créé : la page n'est pas complètement chargée. Vérifiez la connexion puis réessayez."; return; }
+    var safe = (state.name||"patient").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"") || "patient";
+    var filename = "releves-machoire-"+safe+".pdf";
+    var blob = doc.output("blob");
+    var dl = await dlPromise;
+    if (dl){
+      try { await dl.save({filename:filename, data:blob}); msg.textContent="PDF enregistré. Envoyez-le au cabinet par mail ou messagerie."; return; }
+      catch(err){
+        var code = err && err.code;
+        if (code==="declined"){ msg.textContent="Enregistrement annulé."; return; }
+        if (code==="rate_limited"){ msg.textContent="Une fenêtre d'enregistrement est déjà ouverte. Terminez-la, puis réessayez."; return; }
+      }
+    }
+    try {
+      var file = new File([blob], filename, {type:"application/pdf"});
+      if (navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:"Relevés mâchoire"});
+        msg.textContent="PDF partagé."; return;
+      }
+    } catch(e){ if (e && e.name==="AbortError"){ msg.textContent="Partage annulé."; return; } }
+    try {
+      var url=URL.createObjectURL(blob), a=document.createElement("a");
+      a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url);},4000);
+      msg.textContent="PDF téléchargé. Envoyez-le au cabinet par mail ou messagerie.";
+    } catch(e){ msg.textContent="Le téléchargement n'est pas disponible sur ce navigateur."; }
+  });
+
+  renderReleve();
+})();
+</script>
+</body>
+</html>

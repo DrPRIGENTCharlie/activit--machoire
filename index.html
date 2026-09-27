@@ -90,12 +90,11 @@ td.cell.off{background:var(--off)}
 .primary{width:100%;min-height:54px;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:18px;cursor:pointer;margin-top:6px}
 .secondary{width:100%;min-height:48px;border:1.5px solid var(--line);border-radius:12px;background:transparent;cursor:pointer;margin-top:24px;color:var(--mute)}
 .note{color:var(--mute);font-size:14px;margin:10px 0 0}
-.progress{font-size:15px;margin:0 0 14px}
 ol.steps{margin:0 0 16px;padding-left:22px}
 ol.steps li{margin-bottom:6px}
 
 /* bottom nav */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
 nav.tabs button{min-height:58px;border:0;background:transparent;font-weight:600;color:var(--mute);cursor:pointer}
 nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
 /* capture view: always light, compact enough for one phone screenshot */
@@ -127,8 +126,43 @@ nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 
     <p id="subtitle">7 jours, 3 relevés par jour</p>
   </header>
 
+  <!-- ACCUEIL -->
+  <main id="view-accueil" hidden>
+    <section class="q" style="margin-top:16px">
+      <h2>Pourquoi ce relevé ?</h2>
+      <p style="margin:6px 0 10px">Les muscles de la mâchoire travaillent tout au long de la journée, et souvent sans qu'on s'en rende compte. Pendant 7 jours, ce relevé aide votre dentiste à mieux comprendre ce qui se passe chez vous au quotidien, ce que l'examen au fauteuil ne permet pas de voir.</p>
+      <p style="margin:0 0 10px">Il n'y a ni bonne ni mauvaise réponse. Ces habitudes sont très courantes et souvent inconscientes, et une case vide est une information aussi utile qu'une case cochée. Notez simplement ce que vous observez, sans chercher à changer quoi que ce soit.</p>
+      <p style="margin:0 0 10px">Chaque relevé prend moins d'une minute. Si vous en oubliez un, ce n'est pas grave : continuez au suivant.</p>
+      <p style="margin:0 0 8px">Nous regarderons ensemble vos réponses lors du prochain rendez-vous, pour décider de la suite la mieux adaptée à votre situation.</p>
+    </section>
+    <section class="q">
+      <h2>Comment faire</h2>
+      <ol class="steps">
+        <li>Indiquez votre nom et la date de début ci-dessous.</li>
+        <li>Réglez 3 alarmes sur votre téléphone : matin, après-midi et soir, à distance des repas.</li>
+        <li>À chaque alarme, ouvrez cette page, onglet « Relevé », et répondez. Cela prend moins d'une minute.</li>
+        <li>Au bout des 7 jours, ouvrez l'onglet « Envoyer » et transmettez vos réponses au cabinet.</li>
+      </ol>
+    </section>
+    <div class="field">
+      <label for="name">Nom</label>
+      <input id="name" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="start">Commencé le</label>
+      <input id="start" type="date">
+    </div>
+    <section class="q">
+      <h2 id="plab">Une seule fois pendant la semaine</h2>
+      <p class="hint">Demandez à la personne qui partage votre chambre si elle vous entend grincer des dents la nuit.</p>
+      <div class="chips" id="partner" role="group" aria-labelledby="plab" style="padding-bottom:8px"></div>
+    </section>
+    <p class="note">Vos réponses restent uniquement sur ce téléphone. Rien n'est envoyé tant que vous ne les partagez pas vous-même.</p>
+    <button class="secondary" id="reset" type="button">Effacer toutes les réponses</button>
+  </main>
+
   <!-- RELEVÉ -->
-  <main id="view-releve">
+  <main id="view-releve" hidden>
     <div class="days" id="days" role="group" aria-label="Choisir le jour"></div>
     <div class="moments" id="moments" role="group" aria-label="Choisir le moment"></div>
 
@@ -162,32 +196,12 @@ nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 
   <!-- ENVOYER -->
   <main id="view-envoyer" hidden>
     <section class="q" style="margin-top:16px">
-      <h2>Comment faire</h2>
-      <ol class="steps">
-        <li>Réglez 3 alarmes sur votre téléphone : matin, après-midi et soir, à distance des repas.</li>
-        <li>À chaque alarme, ouvrez cette page et répondez. Cela prend moins d'une minute.</li>
-        <li>Au bout des 7 jours, créez le PDF ci-dessous et envoyez-le au cabinet.</li>
-      </ol>
+      <h2>Transmettre vos réponses</h2>
+      <p class="hint">Faites une capture d'écran du tableau, puis envoyez-la au cabinet par mail ou messagerie.</p>
+      <button class="primary" id="showCapture" type="button" style="margin-bottom:12px">Afficher le tableau à envoyer</button>
+      <button class="primary" id="makePdf" type="button" hidden style="margin-bottom:12px">Créer et partager le PDF</button>
+      <p class="note" id="pdfMsg" aria-live="polite" style="margin:0 0 8px"></p>
     </section>
-    <div class="field">
-      <label for="name">Nom</label>
-      <input id="name" autocomplete="name">
-    </div>
-    <div class="field">
-      <label for="start">Commencé le</label>
-      <input id="start" type="date">
-    </div>
-    <div class="field">
-      <span style="font-weight:600" id="plab">La personne qui partage votre chambre vous entend-elle grincer des dents la nuit ?</span>
-      <div class="chips" id="partner" role="group" aria-labelledby="plab"></div>
-    </div>
-    <p class="progress" id="progress"></p>
-    <button class="primary" id="showCapture" type="button">Afficher le tableau à envoyer</button>
-    <p class="note" id="captureHint">Faites une capture d'écran du tableau, puis envoyez-la au cabinet par mail ou messagerie.</p>
-    <button class="primary" id="makePdf" type="button" hidden>Créer le PDF</button>
-    <p class="note" id="pdfMsg" aria-live="polite"></p>
-    <p class="note">Vos réponses restent uniquement sur ce téléphone. Rien n'est envoyé tant que vous ne partagez pas vous-même le PDF.</p>
-    <button class="secondary" id="reset" type="button">Effacer toutes les réponses</button>
   </main>
 </div>
 
@@ -204,7 +218,8 @@ nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 
 </div>
 
 <nav class="tabs" aria-label="Navigation">
-  <button type="button" data-view="releve" aria-current="page">Relevé</button>
+  <button type="button" data-view="accueil">Accueil</button>
+  <button type="button" data-view="releve">Relevé</button>
   <button type="button" data-view="tableau">Tableau</button>
   <button type="button" data-view="envoyer">Envoyer</button>
 </nav>
@@ -236,7 +251,7 @@ nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 
   var PARTNER = ["Oui","Non","Ne sait pas","Je dors seul(e)"];
   var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--accent-ink)"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
-  function blank(){ return {name:"", start:"", partner:null, cells:{}}; }
+  function blank(){ return {name:"", start:"", partner:null, seenIntro:false, cells:{}}; }
   var state = blank();
   try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") state = Object.assign(blank(), p); } } catch(e) {}
   function persist(){
@@ -356,30 +371,30 @@ nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 
 
   function countDone(){ var n=0; for (var d=0; d<7; d++) for (var m=0;m<3;m++) if (done(d,m)) n++; return n; }
 
-  function renderSend(){
+  function renderAccueil(){
     var n=document.getElementById("name"); n.value=state.name||"";
     var s=document.getElementById("start"); s.value=state.start||"";
     var pc=document.getElementById("partner"); pc.innerHTML="";
     PARTNER.forEach(function(p,i){
       var b=el("button",{type:"button","class":"chip","aria-pressed":String(state.partner===i)},p);
-      b.addEventListener("click",function(){ state.partner = state.partner===i ? null : i; persist(); renderSend(); });
+      b.addEventListener("click",function(){ state.partner = state.partner===i ? null : i; persist(); renderAccueil(); });
       pc.appendChild(b);
     });
-    document.getElementById("progress").textContent = countDone()+" relevés remplis sur 21.";
   }
   document.getElementById("name").addEventListener("input",function(e){ state.name=e.target.value; persist(); });
   document.getElementById("start").addEventListener("change",function(e){ state.start=e.target.value; persist(); });
 
   // tabs
-  var views={releve:document.getElementById("view-releve"),tableau:document.getElementById("view-tableau"),envoyer:document.getElementById("view-envoyer")};
+  var views={accueil:document.getElementById("view-accueil"),releve:document.getElementById("view-releve"),tableau:document.getElementById("view-tableau"),envoyer:document.getElementById("view-envoyer")};
+  function showView(v){
+    Object.keys(views).forEach(function(k){ views[k].hidden = k!==v; });
+    Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"),function(x){ if (x.getAttribute("data-view")===v) x.setAttribute("aria-current","page"); else x.removeAttribute("aria-current"); });
+    if (v==="accueil") renderAccueil(); if (v==="releve") renderReleve(); if (v==="tableau") renderGrid();
+    document.getElementById("pdfMsg").textContent="";
+    window.scrollTo(0,0);
+  }
   Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"),function(b){
-    b.addEventListener("click",function(){
-      var v=b.getAttribute("data-view");
-      Object.keys(views).forEach(function(k){ views[k].hidden = k!==v; });
-      Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"),function(x){ if (x===b) x.setAttribute("aria-current","page"); else x.removeAttribute("aria-current"); });
-      if (v==="releve") renderReleve(); if (v==="tableau") renderGrid(); if (v==="envoyer") renderSend();
-      window.scrollTo(0,0);
-    });
+    b.addEventListener("click",function(){ showView(b.getAttribute("data-view")); });
   });
 
   document.getElementById("reset").addEventListener("click",function(){
@@ -387,8 +402,7 @@ nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 
     state = blank();
     try { localStorage.removeItem(KEY); } catch(e) {}
     cur = {d:0, m:cur.m};
-    renderSend(); flash("");
-    document.getElementById("pdfMsg").textContent = "Toutes les réponses ont été effacées.";
+    renderAccueil(); flash("");
   });
 
   // ---------- PDF
@@ -456,7 +470,7 @@ nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 
   // ---------- capture view
   function renderCapture(){
     document.getElementById("capMeta").textContent =
-      (state.name ? state.name + ", " : "") + "commencé le " + (fmtDate(state.start) || "non renseigné") + ". " + countDone() + " relevés sur 21.";
+      (state.name ? state.name + ", " : "") + "commencé le " + (fmtDate(state.start) || "non renseigné") + ".";
     var g=document.getElementById("capGrid"), h="";
     h+="<tr><th class='cl'></th>"; for (var d=0; d<7; d++) h+="<th colspan='3' class='"+(d>0?"ds":"")+"'>J"+(d+1)+"</th>"; h+="</tr>";
     h+="<tr><th class='cl'></th>"; for (var d2=0; d2<7; d2++) for (var m=0;m<3;m++) h+="<th class='"+(m===0&&d2>0?"ds":"")+"' style='font-size:9px'>"+MOMENTS[m].k+"</th>"; h+="</tr>";
@@ -530,7 +544,9 @@ nav.tabs button[aria-current="page"]{color:var(--accent);box-shadow:inset 0 3px 
     } catch(e){ msg.textContent="Le téléchargement n'est pas disponible sur ce navigateur."; }
   });
 
-  renderReleve();
+  var firstOpen = !state.seenIntro;
+  if (firstOpen){ state.seenIntro = true; try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+  showView(firstOpen ? "accueil" : "releve");
 })();
 </script>
 </body>
